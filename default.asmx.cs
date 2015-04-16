@@ -43,13 +43,14 @@ namespace MyWebService
 			return UserInfoAccess.GetDataBy(name);
 		}
 		[WebMethod(Description="[注册]必须先检验用户名是否符合规定,惟一性")]
-		public string SignUp(string name,string pass)
+		public string SignUp(string name,string pass,string headImgPath)
 		{
 			if(UserInfoAccess.GetDataBy(name)!=null) return Global.ERROR_EXISTED_USER;
 			UserInfo model=new UserInfo()
 			{
 				username=name,
-				password=pass
+				password=pass,
+				headImgPath=headImgPath,
 			};
 			if( UserInfoAccess.AddData(model))
 				return Global.OPT_SUCCEED;
@@ -59,8 +60,6 @@ namespace MyWebService
 		[WebMethod(Description="目前只删除userInfo表，与参数无关")]
 		public int DeleteAll(string tabelName)
 		{
-			JObject obj=new JObject();
-			
 			return UserInfoAccess.DeleteAll();
 		}
 		[WebMethod]
@@ -74,7 +73,6 @@ namespace MyWebService
 		{
 			Message model=new Message()
 			{
-				Id=Guid.NewGuid(),
 				FromId=from,
 				ToId=to,
 				Text=msg,
@@ -93,4 +91,5 @@ namespace MyWebService
 			return friend.friendList;
 		}
 	}
+	/*Todo 修改密码、修改头像、上传文件、下载文件*/
 }

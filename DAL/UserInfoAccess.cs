@@ -17,6 +17,7 @@ namespace MyWebService.DAL
 				username = (string)dr["username"],
 				password = (string)dr["password"],
 				state = (byte)dr["state"],
+				headImgPath=dr["headImgPath"]==DBNull.Value?"":(string)dr["headImgPath"],
 			};
 		}
 		public static UserInfo GetDataBy(string username)
@@ -35,16 +36,18 @@ namespace MyWebService.DAL
 		}
 		public static bool AddData(UserInfo model)
 		{
-			string cmd = "INSERT INTO [UserInfo] VALUES (@username,@password,@state)";
+			string cmd = "INSERT INTO [UserInfo] VALUES (@username,@password,@state,@headImgPath)";
 			SqlParameter[] Params = new SqlParameter[]
 			{
 				new SqlParameter("username",SqlDbType.NVarChar,50),
 				new SqlParameter("password",SqlDbType.NVarChar),
-				new SqlParameter("state",SqlDbType.Int)
+				new SqlParameter("state",SqlDbType.Int),
+				new SqlParameter("headImgPath",SqlDbType.NVarChar,100),
 			};
 			Params[0].Value = model.username;
 			Params[1].Value = model.password;
 			Params[2].Value = model.state;
+			Params[3].Value = model.headImgPath;
 			int r = MSSQLHelper.Execute(cmd, Params);
 			return r > 0;
 		}
