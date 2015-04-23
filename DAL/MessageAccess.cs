@@ -52,15 +52,17 @@ namespace MyWebService.DAL
 		}
 		public static bool AddMessage(Message model)
 		{
-			string cmd="insert into [Message] (fromid,toid,text) VALUES (@fromid,@toid,@text )";
+			string cmd="insert into [Message] (fromid,toid,text,SendTime) VALUES (@fromid,@toid,@text,@Datetime)";
 			SqlParameter[] p=new SqlParameter[]{
 				new SqlParameter("fromid",SqlDbType.NVarChar,50),
 				new SqlParameter("toid",SqlDbType.NVarChar,50),
-				new SqlParameter("text",SqlDbType.NVarChar)
+				new SqlParameter("text",SqlDbType.NVarChar),
+				new SqlParameter("Datetime",SqlDbType.DateTime),
 			};
 			p[0].Value = model.FromId;
 			p[1].Value = model.ToId;
 			p[2].Value = model.Text;
+			p[3].Value = model.SendTime;
 			return MSSQLHelper.Execute(cmd,p)>0;
 		}
 	}

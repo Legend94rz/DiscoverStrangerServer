@@ -24,7 +24,7 @@ namespace Server.DAL
 			{
 				return dataRowToModel(dt.Rows[0]);
 			}
-			return null;
+			return new Friend();
 		}
 		private static Friend dataRowToModel(DataRow dr)
 		{

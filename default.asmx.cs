@@ -25,13 +25,13 @@ namespace MyWebService
 		{
 			return "Hello World";
 		}
-		[WebMethod(Description="[登录]")]
-		public bool SignIn(string name,string pass)
+		[WebMethod(Description = "[登录]")]
+		public bool SignIn(string name, string pass)
 		{
-			var model=UserInfoAccess.GetDataBy(name);
-			if(model!=null && model.password==pass)
+			var model = UserInfoAccess.GetDataBy(name);
+			if (model != null && model.password == pass)
 			{
-				model.state=Global.State.ONLINE;
+				model.state = Global.State.ONLINE;
 				UserInfoAccess.Update(model);
 				return true;
 			}
@@ -39,25 +39,25 @@ namespace MyWebService
 		}
 		[WebMethod]
 		public UserInfo GetUser(string name)
-		{ 
+		{
 			return UserInfoAccess.GetDataBy(name);
 		}
-		[WebMethod(Description="[注册]必须先检验用户名是否符合规定,惟一性")]
-		public string SignUp(string name,string pass,string headImgPath)
+		[WebMethod(Description = "[注册]必须先检验用户名是否符合规定,惟一性")]
+		public string SignUp(string name, string pass, string headImgPath)
 		{
-			if(UserInfoAccess.GetDataBy(name)!=null) return Global.ERROR_EXISTED_USER;
-			UserInfo model=new UserInfo()
+			if (UserInfoAccess.GetDataBy(name) != null) return Global.ERROR_EXISTED_USER;
+			UserInfo model = new UserInfo()
 			{
-				username=name,
-				password=pass,
-				headImgPath=headImgPath,
+				username = name,
+				password = pass,
+				headImgPath = headImgPath,
 			};
-			if( UserInfoAccess.AddData(model))
+			if (UserInfoAccess.AddData(model))
 				return Global.OPT_SUCCEED;
 			else
 				return Global.ERROR_UNEXCEPT;
 		}
-		[WebMethod(Description="目前只删除userInfo表，与参数无关")]
+		[WebMethod(Description = "目前只删除userInfo表，与参数无关")]
 		public int DeleteAll(string tabelName)
 		{
 			return UserInfoAccess.DeleteAll();
@@ -69,27 +69,57 @@ namespace MyWebService
 			return str[0];
 		}
 		[WebMethod]
-		public bool pushMsg(string from,string to,string msg)
+		public bool pushMsg(string from, string to, string msg, string time)
 		{
-			Message model=new Message()
+			Message model = new Message()
 			{
-				FromId=from,
-				ToId=to,
-				Text=msg,
+				FromId = from,
+				ToId = to,
+				Text = msg,
+				SendTime = DateTime.Parse(time),
 			};
 			return MessageAccess.AddMessage(model);
 		}
 		[WebMethod]
 		public List<Message> pullMsg(string name)
-		{ 
+		{
 			return MessageAccess.GetUnreadMsg(name);
 		}
 		[WebMethod]
 		public string getFriends(string name)
-		{ 
-			var friend=FriendAccess.GetFriend(name);
+		{
+			var friend = FriendAccess.GetFriend(name);
+
 			return friend.friendList;
 		}
+		[WebMethod]
+		public bool updatePosition(string name, float latitude, float longitude)
+		{
+			if (PositionInfoAccess.Exist(name))
+			{
+				return PositionInfoAccess.updatePositionInfo(new PositionInfo()
+				{
+					strangerName = name,
+					latitude = latitude,
+					longitude = longitude,
+				});
+			}
+			else
+			{
+				PositionInfo model=new PositionInfo(){
+					strangerName=name,
+					latitude=latitude,
+					longitude=longitude,
+				};
+				return PositionInfoAccess.Add(model);
+			}
+		}
+		[WebMethod]
+		public List<PositionInfo> getNearStranger(string name, double latitude, double longitude)
+		{
+			return PositionInfoAccess.GetNearStranger(name, latitude, longitude);
+		}
+
 	}
 	/*Todo 修改密码、修改头像、上传文件、下载文件*/
 }

@@ -41,5 +41,15 @@ namespace MyWebService.DAL
 				return _cmd.ExecuteNonQuery();
 			}
 		}
+		public static object QueryScalar(string cmd,SqlParameter[] Params=null)
+		{ 
+			using (SqlConnection conn= new SqlConnection(Global.ConnectString))
+			{
+				SqlCommand _cmd = new SqlCommand(cmd, conn);
+				_AddParams(_cmd, Params);
+				conn.Open();
+				return _cmd.ExecuteScalar();
+			}
+		}
 	}
 }

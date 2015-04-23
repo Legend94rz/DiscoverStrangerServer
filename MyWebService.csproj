@@ -71,6 +71,8 @@
     <Compile Include="DAL\FriendAccess.cs" />
     <Compile Include="DAL\MessageAccess.cs" />
     <Compile Include="DAL\MSSQLHelper.cs" />
+    <Compile Include="DAL\PositionInfoAccess.cs" />
+    <Compile Include="DAL\ShakeAccess.cs" />
     <Compile Include="DAL\UserInfoAccess.cs" />
     <Compile Include="default.asmx.cs">
       <DependentUpon>default.asmx</DependentUpon>
@@ -79,6 +81,8 @@
     <Compile Include="GlobelConfig\Global.cs" />
     <Compile Include="Model\Friend.cs" />
     <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\PositionInfo.cs" />
+    <Compile Include="Model\Shake.cs" />
     <Compile Include="Model\UserInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
