@@ -16,5 +16,6 @@ namespace MyWebService.Model
 		/// 消息状态：0 - 未读;1 - 已读
 		/// </summary>
 		public byte flag { get; set; }
+		public byte msgType { get;set;}
 	}
 }

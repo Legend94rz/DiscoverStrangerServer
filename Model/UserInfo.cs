@@ -13,6 +13,7 @@ namespace MyWebService.Model
 		/// 0-离线;1-已登录
 		/// </summary>
 		public byte state { get;set;}
-		public string headImgPath { get;set;}
+		public bool sex { get;set;}
+		public string nickName { get;set;}
 	}
 }

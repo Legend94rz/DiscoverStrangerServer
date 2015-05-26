@@ -81,6 +81,7 @@
     <Compile Include="GlobelConfig\Global.cs" />
     <Compile Include="Model\Friend.cs" />
     <Compile Include="Model\Message.cs" />
+    <Compile Include="Model\ModelJust4Test.cs" />
     <Compile Include="Model\PositionInfo.cs" />
     <Compile Include="Model\Shake.cs" />
     <Compile Include="Model\UserInfo.cs" />

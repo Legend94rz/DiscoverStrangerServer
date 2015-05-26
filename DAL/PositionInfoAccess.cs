@@ -13,7 +13,7 @@ namespace MyWebService.DAL
 		public static PositionInfo DataRowToModel(DataRow dr)
 		{ 
 			return new PositionInfo(){
-				distance=(double)dr["distance"],
+				distance=((double)dr["distance"])*1000,
 				longitude=(double)dr["longitude"],
 				latitude=(double)dr["latitude"],
 				strangerName=(string)dr["username"],
@@ -22,7 +22,7 @@ namespace MyWebService.DAL
 		public static List<PositionInfo> GetNearStranger(string oneperson,double atLatitude,double atLongitude)
 		{ 
 			List<PositionInfo> ans=new List<PositionInfo>();
-			string cmd = @"select top 10 *,(ACOS(SIN((@Latitude * 3.1415) / 180 )*SIN((Latitude * 3.1415) / 180 )+COS((@Latitude * 3.1415) / 180 )*COS((Latitude * 3.1415) / 180 )*COS((@Longitude * 3.1415) / 180 - (Longitude * 3.1415) / 180 ))* 6380) as Distance from [PositionInfo] where	[Username]<>@username order by Distance";
+			string cmd = @"select *,(ACOS(SIN((@Latitude * 3.1415) / 180 )*SIN((Latitude * 3.1415) / 180 )+COS((@Latitude * 3.1415) / 180 )*COS((Latitude * 3.1415) / 180 )*COS((@Longitude * 3.1415) / 180 - (Longitude * 3.1415) / 180 ))* 6380) as Distance from [PositionInfo] where	[Username]<>@username order by Distance";
 			SqlParameter[] p=new SqlParameter[]{
 				new SqlParameter("username",SqlDbType.NVarChar,50),
 				new SqlParameter("latitude",SqlDbType.Float),
@@ -30,13 +30,18 @@ namespace MyWebService.DAL
 			};
 			p[0].Value=oneperson;
 			p[1].Value=atLatitude;
-			p[2].Value=atLatitude;
+			p[2].Value=atLongitude;
 			DataTable dt = MSSQLHelper.Query(cmd,p);
 			if(dt.Rows.Count>0)
 				foreach (DataRow dr in dt.Rows)
-				{
-					ans.Add(DataRowToModel(dr));
-				}
+					if((double)dr["distance"]<=1000)
+					{
+						ans.Add(DataRowToModel(dr));
+					}
+					else
+					{
+						break;
+					}
 			return ans;
 		}
 		public static bool updatePositionInfo(PositionInfo model)

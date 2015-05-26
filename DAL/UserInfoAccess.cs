@@ -17,7 +17,8 @@ namespace MyWebService.DAL
 				username = (string)dr["username"],
 				password = (string)dr["password"],
 				state = (byte)dr["state"],
-				headImgPath=dr["headImgPath"]==DBNull.Value?"":(string)dr["headImgPath"],
+				sex = (bool)dr["sex"],
+				nickName = (string)dr["nickName"],
 			};
 		}
 		public static UserInfo GetDataBy(string username)
@@ -36,33 +37,39 @@ namespace MyWebService.DAL
 		}
 		public static bool AddData(UserInfo model)
 		{
-			string cmd = "INSERT INTO [UserInfo] VALUES (@username,@password,@state,@headImgPath)";
+			string cmd = "INSERT INTO [UserInfo] VALUES (@username,@password,@state,@sex,@nickName)";
 			SqlParameter[] Params = new SqlParameter[]
 			{
 				new SqlParameter("username",SqlDbType.NVarChar,50),
 				new SqlParameter("password",SqlDbType.NVarChar),
 				new SqlParameter("state",SqlDbType.Int),
-				new SqlParameter("headImgPath",SqlDbType.NVarChar,100),
+				new SqlParameter("sex",SqlDbType.Bit),
+				new SqlParameter("nickName",SqlDbType.NVarChar,50)
 			};
 			Params[0].Value = model.username;
 			Params[1].Value = model.password;
 			Params[2].Value = model.state;
-			Params[3].Value = model.headImgPath;
+			Params[3].Value = model.sex;
+			Params[4].Value = model.nickName;
 			int r = MSSQLHelper.Execute(cmd, Params);
 			return r > 0;
 		}
 		public static bool Update(UserInfo model)
 		{
-			string cmd = "UPDATE [UserInfo] SET password=@password,state=@state WHERE username=@username";
+			string cmd = "UPDATE [UserInfo] SET password=@password,state=@state,nickName=@nickName,sex=@sex WHERE username=@username";
 			SqlParameter[] Params = new SqlParameter[]
 			{
 				new SqlParameter("username",SqlDbType.NVarChar,50),
 				new SqlParameter("password",SqlDbType.NVarChar),
-				new SqlParameter("state",SqlDbType.Int)
+				new SqlParameter("state",SqlDbType.Int),
+				new SqlParameter("nickName",SqlDbType.NVarChar,50),
+				new SqlParameter("sex",SqlDbType.Bit),
 			};
 			Params[0].Value = model.username;
 			Params[1].Value = model.password;
 			Params[2].Value = model.state;
+			Params[3].Value = model.nickName;
+			Params[4].Value = model.sex;
 			int r = MSSQLHelper.Execute(cmd, Params);
 			return r > 0;
 		}

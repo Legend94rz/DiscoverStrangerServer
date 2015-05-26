@@ -22,5 +22,11 @@ namespace MyWebService.GlobelConfig
 			public const int ONLINE=1;
 			public const int OFFLINE=0;
 		}
+		public class MSG_TYPE
+		{ 
+			public const byte T_TEXT=4;
+			public const byte T_PIC=16;
+			public const byte T_VOICE=8;
+		}
 	}
 }

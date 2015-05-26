@@ -26,6 +26,15 @@ namespace Server.DAL
 			}
 			return new Friend();
 		}
+		public static bool isExists(String username)
+		{ 
+			string cmd="SELECT COUNT(1) FROM [Friend] WHERE username=@username";
+			SqlParameter[] Params = new SqlParameter[]{
+				new SqlParameter("username",SqlDbType.NVarChar,50)
+			};
+			Params[0].Value = username;
+			return (int)MSSQLHelper.QueryScalar(cmd,Params)>0;
+		}
 		private static Friend dataRowToModel(DataRow dr)
 		{
 			return new Friend()
@@ -34,9 +43,9 @@ namespace Server.DAL
 				friendList=(string)dr["friendList"],
 			};
 		}
-		public static void Update(Friend model)
+		public static bool Update(Friend model)
 		{
-			string cmd = "UPDATE [UserInfo] SET password=@password,friendList=@friendList WHERE username=@username";
+			string cmd = "UPDATE [Friend] SET friendList=@friendList WHERE username=@username";
 			SqlParameter[] Params = new SqlParameter[]
 			{
 				new SqlParameter("username",SqlDbType.NVarChar,50),
@@ -44,7 +53,19 @@ namespace Server.DAL
 			};
 			Params[0].Value = model.username;
 			Params[1].Value = model.friendList;
-			int r = MSSQLHelper.Execute(cmd, Params);
+			return MSSQLHelper.Execute(cmd, Params)>0;
+		}
+		public static bool Add(Friend model)
+		{ 
+			string cmd="INSERT INTO [Friend] (username,friendList) VALUES (@username,@friendList)";
+			SqlParameter[] Params = new SqlParameter[]
+			{
+				new SqlParameter("username",SqlDbType.NVarChar,50),
+				new SqlParameter("friendList",SqlDbType.NVarChar),
+			};
+			Params[0].Value = model.username;
+			Params[1].Value = model.friendList;
+			return MSSQLHelper.Execute(cmd,Params)>0;
 		}
 	}
 }
