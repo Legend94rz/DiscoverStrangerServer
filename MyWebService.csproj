@@ -72,6 +72,7 @@
     <Compile Include="DAL\MessageAccess.cs" />
     <Compile Include="DAL\MSSQLHelper.cs" />
     <Compile Include="DAL\PositionInfoAccess.cs" />
+    <Compile Include="DAL\SettingsAccess.cs" />
     <Compile Include="DAL\ShakeAccess.cs" />
     <Compile Include="DAL\UserInfoAccess.cs" />
     <Compile Include="default.asmx.cs">
@@ -83,12 +84,15 @@
     <Compile Include="Model\Message.cs" />
     <Compile Include="Model\ModelJust4Test.cs" />
     <Compile Include="Model\PositionInfo.cs" />
+    <Compile Include="Model\Settings.cs" />
     <Compile Include="Model\Shake.cs" />
     <Compile Include="Model\UserInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\legend94rz - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\LegendWebApp - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\LegendWebApp - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\本地.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

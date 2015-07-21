@@ -120,12 +120,14 @@ namespace MyWebService
 			}
 		}
 		[WebMethod]
-		public List<PositionInfo> getNearStranger(string name, double latitude, double longitude)
+		public List<PositionInfo> getNearStranger(string name, double latitude, double longitude,int pageIndex,int pageSize)
 		{
-			return PositionInfoAccess.GetNearStranger(name, latitude, longitude);
+			int start = (pageIndex-1)*pageSize+1;
+			int end = (pageIndex)*pageSize;
+			return PositionInfoAccess.GetNearStranger(name, latitude, longitude,start,end);
 		}
 		[WebMethod]
-		public bool uploadFile(string base64, string path, string fileName,int blockSerial=0)
+		public bool uploadFile(string base64, string path, string fileName, int blockSerial = 0)
 		{
 			bool flag = false;
 			byte[] file = Convert.FromBase64String(base64);
@@ -138,10 +140,10 @@ namespace MyWebService
 				}
 				MemoryStream m = new MemoryStream(file);
 				FileStream fs;
-				if(blockSerial==0)
+				if (blockSerial == 0)
 					fs = new FileStream(path + @"\" + fileName, FileMode.Create);
 				else
-					fs=new FileStream(path + @"\" + fileName, FileMode.Append);
+					fs = new FileStream(path + @"\" + fileName, FileMode.Append);
 				m.WriteTo(fs);
 				m.Close();
 				fs.Close();
@@ -183,7 +185,7 @@ namespace MyWebService
 			}
 		}
 		[WebMethod]
-		public byte[] downloadFileByBlock(string path,string fileName,long blockSize,int blockSerial)
+		public byte[] downloadFileByBlock(string path, string fileName, long blockSize, int blockSerial)
 		{
 			FileStream fs;
 			string CurrentUploadFolderPath = Server.MapPath(path);
@@ -193,12 +195,12 @@ namespace MyWebService
 				if (File.Exists(CurrentUploadFilePath))
 				{
 					fs = File.OpenRead(CurrentUploadFilePath);
-					fs.Seek(blockSize*blockSerial,SeekOrigin.Begin);
+					fs.Seek(blockSize * blockSerial, SeekOrigin.Begin);
 					MemoryStream ms = new MemoryStream();
-					for(int i=0;i<blockSize;i++)
-					{ 
-						int b1=fs.ReadByte();
-						if(b1==-1)break;
+					for (int i = 0; i < blockSize; i++)
+					{
+						int b1 = fs.ReadByte();
+						if (b1 == -1) break;
 						ms.WriteByte((byte)b1);
 					}
 					return ms.ToArray();
@@ -212,15 +214,16 @@ namespace MyWebService
 			}
 		}
 		[WebMethod]
-		public long getFileSize(string path,string fileName)
+		public long getFileSize(string path, string fileName)
 		{
 			FileStream fs;
 			string FolderPath = Server.MapPath(path);
 			string FilePath = FolderPath + @"\" + fileName;
-			try { 
-				if(File.Exists(FilePath))
-				{ 
-					fs=File.OpenRead(FilePath);
+			try
+			{
+				if (File.Exists(FilePath))
+				{
+					fs = File.OpenRead(FilePath);
 					return fs.Length;
 				}
 				else
@@ -228,8 +231,8 @@ namespace MyWebService
 					return 0;
 				}
 			}
-			catch(Exception)
-			{ 
+			catch (Exception)
+			{
 				return 0;
 			}
 		}
@@ -258,25 +261,65 @@ namespace MyWebService
 			}
 		}
 		[WebMethod]
-		public List<Shake> getShakes(string name,string time)
+		public List<Shake> getShakes(string name, string time)
 		{
 			ShakeAccess.DelOverdueData(DateTime.Parse(time));
-			return ShakeAccess.GetShakes(name,DateTime.Parse(time));
+			return ShakeAccess.GetShakes(name, DateTime.Parse(time));
 		}
 		[WebMethod]
-		public bool addShake(string name,string time)
+		public bool addShake(string name, string time)
 		{
-			var model=new Shake(){
-				id=Guid.NewGuid(),
-				username=name,
-				shakeTime=DateTime.Parse(time),
+			var model = new Shake()
+			{
+				id = Guid.NewGuid(),
+				username = name,
+				shakeTime = DateTime.Parse(time),
 			};
-			if(ShakeAccess.Exist(name))
+			if (ShakeAccess.Exist(name))
 				return ShakeAccess.update(model);
 			return ShakeAccess.Add(model);
 		}
-
+		[WebMethod]
+		public int getMsgCountBy(string where)
+		{
+			return MessageAccess.GetCount(where);
+		}
+		[WebMethod(Description = "行号、页号都从1开始")]
+		public List<Message> getMsgByPage(string where, int pageIndex, int pageSize)
+		{
+			int startIndex = (pageIndex - 1) * pageSize, endIndex = pageIndex * pageSize + 1;
+			return MessageAccess.GetDataByPage(where, startIndex, endIndex);
+		}
+		[WebMethod]
+		public bool updateUserInfo(string username,string password,byte state,bool sex,string nickName,string birthday)
+		{ 
+			UserInfo model=new UserInfo(){
+				username=username,
+				password=password,
+				state=state,
+				sex=sex,
+				nickName=nickName,
+				birthday=DateTime.Parse(birthday)
+			};
+			return UserInfoAccess.Update(model);
+		}
+		[WebMethod]
+		public bool deletePosition(string username)
+		{ 
+			return PositionInfoAccess.Delete(username);
+		}
+		[WebMethod]
+		public Settings getUserSetting(string username)
+		{ 
+			return SettingsAccess.Get(username);
+		}
+		[WebMethod]
+		public bool updateSettings(string username,string setString)
+		{ 
+			return SettingsAccess.SaveOrUpdate(new Settings(){
+				settings=setString,
+				username=username
+			});
+		}
 	}
-
-	/*Todo 修改密码*/
 }

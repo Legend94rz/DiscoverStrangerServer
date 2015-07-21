@@ -1,4 +1,5 @@
-﻿using MyWebService.Model;
+﻿using MyWebService.GlobelConfig;
+using MyWebService.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,6 +11,12 @@ namespace MyWebService.DAL
 {
 	public class ShakeAccess
 	{
+		private static MSSQLHelper helper;
+		static ShakeAccess ()
+		{
+			helper = new MSSQLHelper(Global.ConnectString);
+		}
+
 		private static Shake DataRowToModel(DataRow dr)
 		{
 			return new Shake()
@@ -26,7 +33,7 @@ namespace MyWebService.DAL
 				new SqlParameter("username",SqlDbType.NVarChar,50)
 			};
 			p[0].Value=name;
-			return (int)MSSQLHelper.QueryScalar(cmd,p)>0;
+			return (int)helper.QueryScalar(cmd,p)>0;
 		}
 		public static bool update(Shake model)
 		{ 
@@ -37,7 +44,7 @@ namespace MyWebService.DAL
 			};
 			p[0].Value=model.username;
 			p[1].Value=model.shakeTime;
-			return MSSQLHelper.Execute(cmd,p)>0;
+			return helper.Execute(cmd,p)>0;
 		}
 		public static bool Add(Shake model)
 		{
@@ -50,7 +57,7 @@ namespace MyWebService.DAL
 			p[0].Value = model.id;
 			p[1].Value = model.username;
 			p[2].Value = model.shakeTime;
-			return MSSQLHelper.Execute(cmd, p) > 0;
+			return helper.Execute(cmd, p) > 0;
 		}
 		public static void DelOverdueData(DateTime n)
 		{
@@ -61,7 +68,7 @@ namespace MyWebService.DAL
 				new SqlParameter("now",SqlDbType.DateTime)
 			};
 			p[0].Value = n;
-			MSSQLHelper.Execute(cmd, p);
+			helper.Execute(cmd, p);
 		}
 		public static List<Shake> GetShakes(string name, DateTime shakeTime)
 		{
@@ -76,7 +83,7 @@ namespace MyWebService.DAL
 			p[0].Value = shakeTime - t;
 			p[1].Value = shakeTime + t;
 			p[2].Value = name;
-			DataTable dt = MSSQLHelper.Query(cmd, p);
+			DataTable dt = helper.Query(cmd, p);
 			if (dt.Rows.Count > 0)
 				foreach (DataRow dr in dt.Rows)
 				{

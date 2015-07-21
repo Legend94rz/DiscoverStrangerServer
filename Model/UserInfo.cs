@@ -15,5 +15,6 @@ namespace MyWebService.Model
 		public byte state { get;set;}
 		public bool sex { get;set;}
 		public string nickName { get;set;}
+		public DateTime birthday { get;set;}
 	}
 }

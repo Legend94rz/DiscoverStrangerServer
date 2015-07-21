@@ -8,6 +8,8 @@ namespace MyWebService.GlobelConfig
 	public class Global
 	{
 		public static string ConnectString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+		public static string ExtendConnectString = ConfigurationManager.ConnectionStrings["ExtendConnection"].ConnectionString;
+
 		public const string OPT_SUCCEED = "操作成功";
 		public const string ERROR_EXISTED_USER = "已存在的用户";
 		public const string ERROR_STILL_ONLINE = "还未下线";

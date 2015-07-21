@@ -1,4 +1,5 @@
-﻿using MyWebService.Model;
+﻿using MyWebService.GlobelConfig;
+using MyWebService.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,6 +11,12 @@ namespace MyWebService.DAL
 {
 	public class MessageAccess
 	{
+		private static MSSQLHelper helper;
+		static MessageAccess ()
+		{
+			helper = new MSSQLHelper(Global.ConnectString);
+		}
+
 		/// <summary>
 		/// 获取用户未读消息并设为已读
 		/// </summary>
@@ -21,7 +28,7 @@ namespace MyWebService.DAL
 				new	SqlParameter("username",System.Data.SqlDbType.NVarChar,50),
 			};
 			p[0].Value = username;
-			DataTable dt = MSSQLHelper.Query(cmd, p);
+			DataTable dt = helper.Query(cmd, p);
 			if (dt.Rows.Count > 0)
 			{
 				string updateStr = "";
@@ -31,7 +38,7 @@ namespace MyWebService.DAL
 					ans.Add(m);
 					updateStr += generateSetReadCMD(m);
 				}
-				MSSQLHelper.Execute(updateStr);
+				helper.Execute(updateStr);
 			}
 			return ans;
 		}
@@ -67,7 +74,27 @@ namespace MyWebService.DAL
 			p[2].Value = model.Text;
 			p[3].Value = model.SendTime;
 			p[4].Value = model.msgType;
-			return MSSQLHelper.Execute(cmd, p) > 0;
+			return helper.Execute(cmd, p) > 0;
+		}
+		public static int GetCount(string where)
+		{ 
+			string cmd="select count(1) from [Message] where " + where;
+			return (int)helper.QueryScalar(cmd);
+		}
+		//不包括 startIndex 跟 endIndex 这两条记录
+		public static List<Message> GetDataByPage(string where,int startIndex,int endIndex)
+		{ 
+			string cmd=String.Format( "select * from ( Select ROW_NUMBER() OVER (order by T.SendTime) AS Row,T.* from [Message] T where {0} ) TT where TT.Row between {1} and {2}",where,startIndex+1,endIndex-1);
+			DataTable dt=helper.Query(cmd);
+			List<Message> ans=new List<Message>();
+			if(dt.Rows.Count>0)
+			{
+				foreach (DataRow dr in dt.Rows)
+				{
+					ans.Add(DataRowToModel(dr));
+				}
+			}
+			return ans;
 		}
 	}
 }

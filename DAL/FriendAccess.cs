@@ -1,4 +1,5 @@
 ﻿using MyWebService.DAL;
+using MyWebService.GlobelConfig;
 using Server.Model;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,11 @@ namespace Server.DAL
 {
 	public class FriendAccess
 	{
+		private static MSSQLHelper helper;
+		static FriendAccess ()
+		{
+			helper = new MSSQLHelper(Global.ConnectString);
+		}
 		public static Friend GetFriend(string username)
 		{
 			string cmd = "SELECT * FROM [Friend] WHERE username=@username";
@@ -19,7 +25,7 @@ namespace Server.DAL
 				new SqlParameter("username",SqlDbType.NVarChar,50)
 			};
 			Params[0].Value = username;
-			DataTable dt = MSSQLHelper.Query(cmd, Params);
+			DataTable dt = helper.Query(cmd, Params);
 			if (dt.Rows.Count > 0)
 			{
 				return dataRowToModel(dt.Rows[0]);
@@ -33,7 +39,7 @@ namespace Server.DAL
 				new SqlParameter("username",SqlDbType.NVarChar,50)
 			};
 			Params[0].Value = username;
-			return (int)MSSQLHelper.QueryScalar(cmd,Params)>0;
+			return (int)helper.QueryScalar(cmd,Params)>0;
 		}
 		private static Friend dataRowToModel(DataRow dr)
 		{
@@ -53,7 +59,7 @@ namespace Server.DAL
 			};
 			Params[0].Value = model.username;
 			Params[1].Value = model.friendList;
-			return MSSQLHelper.Execute(cmd, Params)>0;
+			return helper.Execute(cmd, Params)>0;
 		}
 		public static bool Add(Friend model)
 		{ 
@@ -65,7 +71,7 @@ namespace Server.DAL
 			};
 			Params[0].Value = model.username;
 			Params[1].Value = model.friendList;
-			return MSSQLHelper.Execute(cmd,Params)>0;
+			return helper.Execute(cmd,Params)>0;
 		}
 	}
 }
